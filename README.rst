@@ -305,12 +305,16 @@ recipe's `initialization` option::
         import django
         django.core.management.execute_from_command_line = execute_from_command_line
 
-Example with generate wsgi file for django-redis-websocket more (https://github.com/jrief/django-websocket-redis)
+Example with generate wsgi file for django-redis-websocket 
+----------------------------------------------------------
 
-  [django]
-  recipe = djangorecipe
-  settings = development
-  project = exampleproject
-  wsgi = true
-  websocket = true
+more (https://github.com/jrief/django-websocket-redis)::
 
+    [django]
+    recipe = djangorecipe
+    settings = development
+    project = exampleproject
+    wsgi = true
+    websocket = true
+    
+    
