@@ -11,6 +11,27 @@ import %(module_name)s
 
 application = %(module_name)s.%(attrs)s(%(arguments)s)
 """,
+    'websocket': """
+
+%(relative_paths_setup)s
+import sys
+sys.path[0:0] = [
+  %(path)s,
+  ]
+%(initialization)s
+# import %(module_name)s
+
+import os
+import gevent.socket
+import redis.connection
+from ws4redis.uwsgi_runserver import uWSGIWebsocketServer
+
+
+redis.connection.socket = gevent.socket
+os.environ.update(DJANGO_SETTINGS_MODULE='ad.devel-kybi')
+application = uWSGIWebsocketServer()
+
+""",
 }
 
 production_settings = """
