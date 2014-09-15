@@ -19,16 +19,16 @@ sys.path[0:0] = [
   %(path)s,
   ]
 %(initialization)s
-# import %(module_name)s
+import %(module_name)s
 
-import os
-import gevent.socket
-import redis.connection
-from ws4redis.uwsgi_runserver import uWSGIWebsocketServer
+# import os
+# import gevent.socket
+# import redis.connection
+# from ws4redis.uwsgi_runserver import uWSGIWebsocketServer
 
 
-redis.connection.socket = gevent.socket
-os.environ.update(DJANGO_SETTINGS_MODULE='ad.devel-kybi')
+# redis.connection.socket = gevent.socket
+# os.environ.update(DJANGO_SETTINGS_MODULE='ad.devel-kybi')
 application = uWSGIWebsocketServer()
 
 """,
