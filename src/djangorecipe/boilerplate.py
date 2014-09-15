@@ -29,7 +29,7 @@ import %(module_name)s
 
 # redis.connection.socket = gevent.socket
 # os.environ.update(DJANGO_SETTINGS_MODULE='ad.devel-kybi')
-application = uWSGIWebsocketServer()
+# application = uWSGIWebsocketServer()
 
 """,
 }
