@@ -45,7 +45,9 @@ class Recipe(object):
 
         # mod_wsgi support script
         options.setdefault('wsgi', 'false')
+        options.setdefault('wsgi_sentry', 'false')
         options.setdefault('websocket', 'false')
+        options.setdefault('websocket_sentry', 'false')
         options.setdefault('wsgilog', '')
         options.setdefault('logfile', '')
 
@@ -77,8 +79,14 @@ class Recipe(object):
         # Make the wsgi and fastcgi scripts if enabled
         script_paths.extend(self.make_scripts(extra_paths, ws))
 
+        # Make the wsgi + sentry and fastcgi scripts if enabled
+        script_paths.extend(self.make_scripts_sentry(extra_paths, ws))
+
         # Make the wsgi for websocket
         script_paths.extend(self.make_scripts_websocket(extra_paths, ws))
+
+        # Make the wsgi + sentry for websocket
+        script_paths.extend(self.make_scripts_websocket_sentry(extra_paths, ws))
 
         # Create default settings if we haven't got a project
         # egg specified, and if it doesn't already exist
@@ -189,6 +197,92 @@ class Recipe(object):
             script_template[protocol] +
             self.options['deploy-script-extra']
         )
+
+        if self.options.get(protocol, '').lower() == 'true':
+            project = self.options.get('projectegg',
+                                       self.options['project'])
+            scripts.extend(
+                zc.buildout.easy_install.scripts(
+                    [(self.options.get('wsgi-script') or
+                      '%s.%s' % (self.options.get('control-script',
+                                                  self.name),
+                                 protocol),
+                      'djangorecipe.%s' % protocol, 'main')],
+                    ws,
+                    sys.executable,
+                    self.options['bin-directory'],
+                    extra_paths=extra_paths,
+                    relative_paths=self._relative_paths,
+                    arguments="'%s.%s', logfile='%s'" % (
+                        project, self.options['settings'],
+                        self.options.get('logfile')),
+                    initialization=self.options['initialization'],
+                ))
+
+        zc.buildout.easy_install.script_template = _script_template
+        return scripts
+
+    def make_scripts_sentry(self, extra_paths, ws):
+        scripts = []
+        _script_template = zc.buildout.easy_install.script_template
+
+        print '\n\n\n_script_template = zc.buildout.easy_install.script_template\n', _script_template
+
+        protocol = 'wsgi_sentry'
+        if 'deploy_script_extra' in self.options:
+            # Renamed between 1.9 and 1.10
+            raise ValueError(
+                "'deploy_script_extra' option found (with underscores). " +
+                "This has been renamed to 'deploy-script-extra'.")
+        zc.buildout.easy_install.script_template = (
+            zc.buildout.easy_install.script_header +
+            script_template[protocol] +
+            self.options['deploy-script-extra']
+        )
+
+        if self.options.get(protocol, '').lower() == 'true':
+            project = self.options.get('projectegg',
+                                       self.options['project'])
+
+            protocol = 'wsgi'
+            scripts.extend(
+                zc.buildout.easy_install.scripts(
+                    [(self.options.get('wsgi-script') or
+                      '%s.%s' % (self.options.get('control-script',
+                                                  self.name),
+                                 protocol),
+                      'djangorecipe.%s' % protocol, 'main')],
+                    ws,
+                    sys.executable,
+                    self.options['bin-directory'],
+                    extra_paths=extra_paths,
+                    relative_paths=self._relative_paths,
+                    arguments="'%s.%s', logfile='%s'" % (
+                        project, self.options['settings'],
+                        self.options.get('logfile')),
+                    initialization=self.options['initialization'],
+                ))
+
+        zc.buildout.easy_install.script_template = _script_template
+        return scripts
+
+
+    def make_scripts_websocket(self, extra_paths, ws):
+        scripts = []
+        _script_template = zc.buildout.easy_install.script_template
+        protocol = 'websocket'
+        if 'deploy_script_extra' in self.options:
+            # Renamed between 1.9 and 1.10
+            raise ValueError(
+                "'deploy_script_extra' option found (with underscores). " +
+                "This has been renamed to 'deploy-script-extra'.")
+
+        zc.buildout.easy_install.script_template = (
+            zc.buildout.easy_install.script_header +
+            script_template[protocol] +
+            self.options['deploy-script-extra']
+        )
+
         if self.options.get(protocol, '').lower() == 'true':
             project = self.options.get('projectegg',
                                        self.options['project'])
@@ -212,10 +306,10 @@ class Recipe(object):
         zc.buildout.easy_install.script_template = _script_template
         return scripts
 
-    def make_scripts_websocket(self, extra_paths, ws):
+    def make_scripts_websocket_sentry(self, extra_paths, ws):
         scripts = []
         _script_template = zc.buildout.easy_install.script_template
-        protocol = 'websocket'
+        protocol = 'websocket_sentry'
         if 'deploy_script_extra' in self.options:
             # Renamed between 1.9 and 1.10
             raise ValueError(
@@ -231,6 +325,7 @@ class Recipe(object):
         if self.options.get(protocol, '').lower() == 'true':
             project = self.options.get('projectegg',
                                        self.options['project'])
+            protocol = 'websocket'
             scripts.extend(
                 zc.buildout.easy_install.scripts(
                     [(self.options.get('wsgi-script') or
@@ -284,6 +379,16 @@ class Recipe(object):
 
         # Make the wsgi and fastcgi scripts if enabled
         self.make_scripts(extra_paths, ws)
+
+        # Make the wsgi for websocket
+        self.make_scripts_websocket(extra_paths, ws)
+
+        # Make the wsgi + sentry and fastcgi scripts if enabled
+        self.make_scripts_sentry(extra_paths, ws)
+
+        # Make the wsgi + sentry for websocket
+        self.make_scripts_websocket_sentry(extra_paths, ws)
+
 
     def create_file(self, file, template, options):
         if os.path.exists(file):

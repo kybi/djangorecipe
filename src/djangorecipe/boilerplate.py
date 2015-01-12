@@ -11,6 +11,20 @@ import %(module_name)s
 
 application = %(module_name)s.%(attrs)s(%(arguments)s)
 """,
+
+    'wsgi_sentry': """
+
+%(relative_paths_setup)s
+import sys
+sys.path[0:0] = [
+  %(path)s,
+  ]
+%(initialization)s
+from raven.contrib.django.raven_compat.middleware.wsgi import Sentry
+import %(module_name)s
+
+application = Sentry(%(module_name)s.%(attrs)s(%(arguments)s))
+""",
     'websocket': """
 
 %(relative_paths_setup)s
@@ -23,6 +37,21 @@ import %(module_name)s
 
 application = %(module_name)s.%(attrs)s(%(arguments)s)
 """,
+    'websocket_sentry': """
+
+%(relative_paths_setup)s
+import sys
+sys.path[0:0] = [
+  %(path)s,
+  ]
+%(initialization)s
+from raven.contrib.django.raven_compat.middleware.wsgi import Sentry
+import %(module_name)s
+
+application = Sentry(%(module_name)s.%(attrs)s(%(arguments)s))
+""",
+
+
 }
 
 production_settings = """

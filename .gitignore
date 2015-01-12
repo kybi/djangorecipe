@@ -1,5 +1,6 @@
 *.pyc
 .installed.cfg
+.idea
 bin
 develop-eggs
 koe
@@ -8,3 +9,4 @@ src/djangorecipe.egg-info
 .coverage
 htmlcov
 /eggs
+atlassian-ide-plugin.xml
