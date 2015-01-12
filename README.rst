@@ -318,3 +318,16 @@ more (https://github.com/jrief/django-websocket-redis)::
     websocket = true
     
     
+Example with generate wsgi with sentry WSGI wrapper and websocket
+-----------------------------------------------------------------
+
+more (https://github.com/jrief/django-websocket-redis)::
+
+    [django]
+    recipe = djangorecipe
+    settings = development
+    project = exampleproject
+    wsgi = true
+    websocket = true
+    wsgi_sentry = true
+    websocket_sentry = true
