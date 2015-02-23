@@ -226,7 +226,7 @@ class Recipe(object):
         scripts = []
         _script_template = zc.buildout.easy_install.script_template
 
-        print '\n\n\n_script_template = zc.buildout.easy_install.script_template\n', _script_template
+        # print '\n\n\n_script_template = zc.buildout.easy_install.script_template\n', _script_template
 
         protocol = 'wsgi_sentry'
         if 'deploy_script_extra' in self.options:
